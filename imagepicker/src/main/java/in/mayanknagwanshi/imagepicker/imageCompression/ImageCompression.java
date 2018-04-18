@@ -1,12 +1,13 @@
 package in.mayanknagwanshi.imagepicker.imageCompression;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.media.ExifInterface;
+import android.support.media.ExifInterface;
 import android.os.AsyncTask;
 
 import java.io.File;
@@ -15,10 +16,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ImageCompression extends AsyncTask<String, Void, String> {
-    private String filePath;
-    private ImageCompressionListener imageCompressionListener;
+    private final String filePath;
+    private final ImageCompressionListener imageCompressionListener;
 
-    private Context context;
+    @SuppressLint("StaticFieldLeak")
+    private final Context context;
     private static final float maxHeight = 1280.0f;
     private static final float maxWidth = 1280.0f;
 
@@ -49,7 +51,7 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
     }
 
 
-    public String compressImage(String imagePath) {
+    private String compressImage(String imagePath) {
         Bitmap scaledBitmap = null;
 
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -108,27 +110,29 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
         canvas.setMatrix(scaleMatrix);
         canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
 
-        if (bmp != null) {
-            bmp.recycle();
-        }
+        bmp.recycle();
 
         ExifInterface exif;
         try {
             exif = new ExifInterface(imagePath);
             int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
             Matrix matrix = new Matrix();
-            if (orientation == 6) {
-                matrix.postRotate(90);
-            } else if (orientation == 3) {
-                matrix.postRotate(180);
-            } else if (orientation == 8) {
-                matrix.postRotate(270);
+            switch (orientation) {
+                case 6:
+                    matrix.postRotate(90);
+                    break;
+                case 3:
+                    matrix.postRotate(180);
+                    break;
+                case 8:
+                    matrix.postRotate(270);
+                    break;
             }
             scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        FileOutputStream out = null;
+        FileOutputStream out;
         String filepath = getFilename();
         try {
             out = new FileOutputStream(filepath);
@@ -143,7 +147,7 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
         return filepath;
     }
 
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
@@ -163,7 +167,7 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
         return inSampleSize;
     }
 
-    public String getFilename() {
+    private String getFilename() {
 
         File mediaStorageDir = new File(context.getExternalFilesDir(""), "compressed");
 

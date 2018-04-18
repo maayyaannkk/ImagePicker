@@ -142,7 +142,7 @@ public class ImagePicker {
         if (getImage != null) {
             //outputFileUri = Uri.fromFile(new File(getImage.getPath(), "profile.png"));
             outputFileUri = FileProvider.getUriForFile(activity != null ? activity : fragment.getActivity(),
-                    activity != null?activity.getApplicationContext().getPackageName() + ".provider":fragment.getActivity().getApplicationContext().getPackageName(),
+                    activity != null ? activity.getApplicationContext().getPackageName() + ".provider" : fragment.getActivity().getApplicationContext().getPackageName() + ".provider",
                     new File(getImage.getPath(), "profile.png"));
         }
         return outputFileUri;
@@ -168,7 +168,7 @@ public class ImagePicker {
     private String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Audio.Media.DATA};
         Cursor cursor = activity != null ?
-                activity.managedQuery(contentUri, proj, null, null, null) : fragment.getActivity().managedQuery(contentUri, proj, null, null, null);
+                activity.getContentResolver().query(contentUri, proj, null, null, null) : fragment.getActivity().getContentResolver().query(contentUri, proj, null, null, null);
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
