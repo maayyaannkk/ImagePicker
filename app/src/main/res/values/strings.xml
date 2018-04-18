@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ImagePicker</string>
+    <string name="button_activity_example">Activity Example</string>
+    <string name="button_fragment_example">Fragment Example</string>
 </resources>
