@@ -1,7 +1,7 @@
-# ImagePicker
+# ImagePicker 
 Android library to choose image from gallery or camera with option to compress result image.
 
-# Download [![](https://jitpack.io/v/maayyaannkk/ImagePicker.svg)](https://jitpack.io/#maayyaannkk/ImagePicker)
+# Download [![](https://jitpack.io/v/maayyaannkk/ImagePicker.svg)](https://jitpack.io/#maayyaannkk/ImagePicker) [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-Image%20Picker%20and%20compression-green.svg?style=flat )]( https://android-arsenal.com/details/1/7055 )
 
 Add this to your project's `build.gradle`
 
