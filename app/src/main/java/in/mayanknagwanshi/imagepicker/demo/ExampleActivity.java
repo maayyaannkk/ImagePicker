@@ -8,11 +8,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
-import in.mayanknagwanshi.imagepicker.imageCompression.ImageCompressionListener;
-import in.mayanknagwanshi.imagepicker.imagePicker.ImagePicker;
+import in.mayanknagwanshi.imagepicker.ImageSelectActivity;
 
 public class ExampleActivity extends AppCompatActivity {
-    private ImagePicker imagePicker;
     private ImageView imageView;
 
     @Override
@@ -22,32 +20,20 @@ public class ExampleActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.imageView);
 
-        imagePicker = new ImagePicker();
-        imagePicker.withActivity(this).chooseFromGallery(false).withCompression(true).start();
+        Intent intent = new Intent(this, ImageSelectActivity.class);
+        intent.putExtra(ImageSelectActivity.FLAG_COMPRESS, false);
+        intent.putExtra(ImageSelectActivity.FLAG_CAMERA, false);
+        intent.putExtra(ImageSelectActivity.FLAG_GALLERY, true);
+        startActivityForResult(intent, 1213);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ImagePicker.SELECT_IMAGE && resultCode == Activity.RESULT_OK) {
-            imagePicker.addOnCompressListener(new ImageCompressionListener() {
-                @Override
-                public void onStart() {
-
-                }
-
-                @Override
-                public void onCompressed(String filePath) {
-                    Bitmap selectedImage = BitmapFactory.decodeFile(filePath);
-                    imageView.setImageBitmap(selectedImage);
-                }
-            });
-            String filePath = imagePicker.getImageFilePath(data);
-            if (filePath != null) {
-                Bitmap selectedImage = BitmapFactory.decodeFile(filePath);
-                imageView.setImageBitmap(selectedImage);
-            }
-
+        if (requestCode == 1213 && resultCode == Activity.RESULT_OK) {
+            String filePath = data.getStringExtra(ImageSelectActivity.RESULT_FILE_PATH);
+            Bitmap selectedImage = BitmapFactory.decodeFile(filePath);
+            imageView.setImageBitmap(selectedImage);
         }
     }
 }
