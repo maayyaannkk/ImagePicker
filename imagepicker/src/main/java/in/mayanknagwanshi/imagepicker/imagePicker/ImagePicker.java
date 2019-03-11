@@ -2,7 +2,6 @@ package in.mayanknagwanshi.imagepicker.imagePicker;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 
@@ -177,10 +177,10 @@ public class ImagePicker {
     public String getImageFilePath(Intent data) {
         if (!isCompress)
             return getPickImageResultFilePath(data);
-        else {
+        else if (getPickImageResultFilePath(data) != null) {
             new ImageCompression(activity != null ? activity : fragment.getActivity(), getPickImageResultFilePath(data), imageCompressionListener).execute();
-            return null;
         }
+        return null;
     }
 
     public void addOnCompressListener(ImageCompressionListener imageCompressionListener) {
