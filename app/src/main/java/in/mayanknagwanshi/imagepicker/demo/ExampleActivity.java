@@ -21,8 +21,8 @@ public class ExampleActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
 
         Intent intent = new Intent(this, ImageSelectActivity.class);
-        intent.putExtra(ImageSelectActivity.FLAG_COMPRESS, false);
-        intent.putExtra(ImageSelectActivity.FLAG_CAMERA, false);
+        intent.putExtra(ImageSelectActivity.FLAG_COMPRESS, true);
+        intent.putExtra(ImageSelectActivity.FLAG_CAMERA, true);
         intent.putExtra(ImageSelectActivity.FLAG_GALLERY, true);
         startActivityForResult(intent, 1213);
     }
