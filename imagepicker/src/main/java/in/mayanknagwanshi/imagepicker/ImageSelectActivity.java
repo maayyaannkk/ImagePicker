@@ -102,10 +102,6 @@ public class ImageSelectActivity extends AppCompatActivity {
                     setResult(RESULT_OK, intent);
                     finish();
                 }
-                if (filePath==null){
-                    setResult(RESULT_CANCELED);
-                    finish();
-                }
             } else {
                 setResult(RESULT_CANCELED);
                 finish();
