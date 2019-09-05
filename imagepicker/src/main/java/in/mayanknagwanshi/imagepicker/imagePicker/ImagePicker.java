@@ -3,19 +3,25 @@ package in.mayanknagwanshi.imagepicker.imagePicker;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,12 +172,41 @@ public class ImagePicker {
     }
 
     private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = {MediaStore.Audio.Media.DATA};
+        /*String[] proj = {MediaStore.Audio.Media.DATA};
         Cursor cursor = activity != null ?
                 activity.getContentResolver().query(contentUri, proj, null, null, null) : fragment.getActivity().getContentResolver().query(contentUri, proj, null, null, null);
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
         cursor.moveToFirst();
-        return cursor.getString(column_index);
+        return cursor.getString(column_index);*/
+
+        OutputStream out;
+        File file = new File(getFilename());
+
+        try {
+            if (file.createNewFile()) {
+                InputStream iStream = activity != null ? activity.getContentResolver().openInputStream(contentUri) : fragment.getContext().getContentResolver().openInputStream(contentUri);
+                byte[] inputData = getBytes(iStream);
+                out = new FileOutputStream(file);
+                out.write(inputData);
+                out.close();
+                return file.getAbsolutePath();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
     }
 
     public String getImageFilePath(Intent data) {
@@ -185,5 +220,21 @@ public class ImagePicker {
 
     public void addOnCompressListener(ImageCompressionListener imageCompressionListener) {
         this.imageCompressionListener = imageCompressionListener;
+    }
+
+    private String getFilename() {
+        Context context = activity != null ? activity : fragment.getContext();
+        File mediaStorageDir = new File(context.getExternalFilesDir(""), "uncompressed");
+
+        //File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/Compressed");
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            mediaStorageDir.mkdirs();
+        }
+
+        String mImageName = "IMG_" + String.valueOf(System.currentTimeMillis()) + ".png";
+        return mediaStorageDir.getAbsolutePath() + "/" + mImageName;
+
     }
 }
