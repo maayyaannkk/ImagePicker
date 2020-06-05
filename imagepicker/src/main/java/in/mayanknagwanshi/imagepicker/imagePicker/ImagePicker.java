@@ -34,6 +34,7 @@ public class ImagePicker {
     private boolean isCompress = true, isCamera = true, isGallery = true;
     public static final int SELECT_IMAGE = 121;
     private ImageCompressionListener imageCompressionListener;
+    private String filePath;
 
     public ImagePicker withActivity(Activity activity) {
         this.activity = activity;
@@ -113,8 +114,7 @@ public class ImagePicker {
 
         if (isGallery) {
             // collect all gallery intents
-            Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            galleryIntent.setType("image/*");
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
             for (ResolveInfo res : listGallery) {
                 Intent intent = new Intent(galleryIntent);
@@ -126,7 +126,7 @@ public class ImagePicker {
 
         Intent mainIntent = allIntents.get(allIntents.size() - 1);
         for (Intent intent : allIntents) {
-            if (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
+            if (intent.getComponent() != null && intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
                 mainIntent = intent;
                 break;
             }
@@ -147,9 +147,11 @@ public class ImagePicker {
         File getImage = activity != null ? activity.getExternalFilesDir("") : fragment.getActivity().getExternalFilesDir("");
         if (getImage != null) {
             //outputFileUri = Uri.fromFile(new File(getImage.getPath(), "profile.png"));
+            String fileName = "IMG_" + System.currentTimeMillis() + ".png";
+            filePath = new File(getImage.getPath(), fileName).getPath();
             outputFileUri = FileProvider.getUriForFile(activity != null ? activity : fragment.getActivity(),
                     activity != null ? activity.getApplicationContext().getPackageName() + ".provider" : fragment.getActivity().getApplicationContext().getPackageName() + ".provider",
-                    new File(getImage.getPath(), "profile.png"));
+                    new File(getImage.getPath(), fileName));
         }
         return outputFileUri;
     }
@@ -166,7 +168,7 @@ public class ImagePicker {
         }*/
 
         //Log.e("isCamera", isCamera ? "true" : "false");
-        if (isCamera) return getCaptureImageOutputUri().getPath();
+        if (isCamera) return filePath;
         else return getRealPathFromURI(data.getData());
         //return isCamera ? getCaptureImageOutputUri() : data.getData();
     }

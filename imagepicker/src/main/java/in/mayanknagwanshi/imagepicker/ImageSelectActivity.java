@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +21,11 @@ import in.mayanknagwanshi.imagepicker.imagePicker.ImagePicker;
 
 public class ImageSelectActivity extends AppCompatActivity {
     private static final int EXTERNAL_PERMISSION_CODE = 1234;
+
+    private ProgressBar progressBar;
+    private TextView textViewCamera;
+    private TextView textViewGallery;
+    private TextView textViewCancel;
 
     private ImagePicker imagePicker;
 
@@ -34,14 +42,45 @@ public class ImageSelectActivity extends AppCompatActivity {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_image_select);
 
+        imagePicker = new ImagePicker();
+
+        progressBar = findViewById(R.id.progressBar);
+        textViewCamera = findViewById(R.id.textViewCamera);
+        textViewGallery = findViewById(R.id.textViewGallery);
+        textViewCancel = findViewById(R.id.textViewCancel);
+
+        textViewCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        });
+        textViewCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleProgress(true);
+                imagePicker.withActivity(ImageSelectActivity.this).chooseFromGallery(false).chooseFromCamera(true).withCompression(isCompress).start();
+            }
+        });
+        textViewGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleProgress(true);
+                imagePicker.withActivity(ImageSelectActivity.this).chooseFromGallery(true).chooseFromCamera(false).withCompression(isCompress).start();
+            }
+        });
+
         if (getIntent() != null) {
             isCompress = getIntent().getBooleanExtra(FLAG_COMPRESS, true);
             isCamera = getIntent().getBooleanExtra(FLAG_CAMERA, true);
             isGallery = getIntent().getBooleanExtra(FLAG_GALLERY, true);
         }
 
-        imagePicker = new ImagePicker();
-        if (checkPermission()) {
+        if (isCamera && isGallery) toggleProgress(false);
+        else toggleProgress(true);
+
+        if (checkPermission() && (!isCamera || !isGallery)) {
             //start image picker
             imagePicker.withActivity(this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
         } else {
@@ -65,7 +104,8 @@ public class ImageSelectActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == EXTERNAL_PERMISSION_CODE) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                imagePicker.withActivity(this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
+                if ((!isCamera || !isGallery))
+                    imagePicker.withActivity(this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
             } else {
                 setResult(RESULT_CANCELED);
                 finish();
@@ -108,5 +148,12 @@ public class ImageSelectActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    private void toggleProgress(boolean showProgress) {
+        progressBar.setVisibility(showProgress ? View.VISIBLE : View.GONE);
+        textViewCamera.setVisibility(showProgress ? View.GONE : View.VISIBLE);
+        textViewGallery.setVisibility(showProgress ? View.GONE : View.VISIBLE);
+        textViewCancel.setVisibility(showProgress ? View.GONE : View.VISIBLE);
     }
 }
