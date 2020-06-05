@@ -7,8 +7,42 @@
     android:layout_centerInParent="true"
     tools:context=".ImageSelectActivity">
 
+    <TextView
+        android:id="@+id/textViewCamera"
+        style="@style/TextAppearance.AppCompat.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Camera"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textViewGallery"
+        style="@style/TextAppearance.AppCompat.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewCamera"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Gallery"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/textViewCancel"
+        style="@style/TextAppearance.AppCompat.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewGallery"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Cancel"
+        tools:ignore="HardcodedText" />
+
     <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
 </RelativeLayout>
