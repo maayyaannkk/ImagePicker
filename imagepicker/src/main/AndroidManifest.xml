@@ -11,8 +11,8 @@
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
 
         <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
+            android:name=".provider.ImageSelectionProvider"
+            android:authorities="${applicationId}.image-selection-provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

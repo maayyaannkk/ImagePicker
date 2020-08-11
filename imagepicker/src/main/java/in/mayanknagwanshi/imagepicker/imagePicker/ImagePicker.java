@@ -13,7 +13,6 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import java.io.ByteArrayOutputStream;
@@ -27,6 +26,7 @@ import java.util.List;
 
 import in.mayanknagwanshi.imagepicker.imageCompression.ImageCompression;
 import in.mayanknagwanshi.imagepicker.imageCompression.ImageCompressionListener;
+import in.mayanknagwanshi.imagepicker.provider.ImageSelectionProvider;
 
 public class ImagePicker {
     private Activity activity;
@@ -149,8 +149,8 @@ public class ImagePicker {
             //outputFileUri = Uri.fromFile(new File(getImage.getPath(), "profile.png"));
             String fileName = "IMG_" + System.currentTimeMillis() + ".png";
             filePath = new File(getImage.getPath(), fileName).getPath();
-            outputFileUri = FileProvider.getUriForFile(activity != null ? activity : fragment.getActivity(),
-                    activity != null ? activity.getApplicationContext().getPackageName() + ".provider" : fragment.getActivity().getApplicationContext().getPackageName() + ".provider",
+            outputFileUri = ImageSelectionProvider.getUriForFile(activity != null ? activity : fragment.getActivity(),
+                    activity != null ? activity.getApplicationContext().getPackageName() + ".image-selection-provider" : fragment.getActivity().getApplicationContext().getPackageName() + ".image-selection-provider",
                     new File(getImage.getPath(), fileName));
         }
         return outputFileUri;
