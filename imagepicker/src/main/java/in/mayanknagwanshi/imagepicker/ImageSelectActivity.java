@@ -29,10 +29,11 @@ public class ImageSelectActivity extends AppCompatActivity {
 
     private ImagePicker imagePicker;
 
-    private boolean isCompress = true, isCamera = true, isGallery = true;
+    private boolean isCompress = true, isCamera = true, isGallery = true, isCrop = false;
     public static final String FLAG_COMPRESS = "flag_compress";
     public static final String FLAG_CAMERA = "flag_camera";
     public static final String FLAG_GALLERY = "flag_gallery";
+    public static final String FLAG_CROP = "flag_crop";
 
     public static final String RESULT_FILE_PATH = "result_file_path";
 
@@ -60,14 +61,14 @@ public class ImageSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 toggleProgress(true);
-                imagePicker.withActivity(ImageSelectActivity.this).chooseFromGallery(false).chooseFromCamera(true).withCompression(isCompress).start();
+                imagePicker.withActivity(ImageSelectActivity.this).addContext(ImageSelectActivity.this).chooseFromGallery(false).chooseFromCamera(true).withCompression(isCompress).start();
             }
         });
         textViewGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toggleProgress(true);
-                imagePicker.withActivity(ImageSelectActivity.this).chooseFromGallery(true).chooseFromCamera(false).withCompression(isCompress).start();
+                imagePicker.withActivity(ImageSelectActivity.this).addContext(ImageSelectActivity.this).chooseFromGallery(true).chooseFromCamera(false).withCompression(isCompress).start();
             }
         });
 
@@ -75,6 +76,7 @@ public class ImageSelectActivity extends AppCompatActivity {
             isCompress = getIntent().getBooleanExtra(FLAG_COMPRESS, true);
             isCamera = getIntent().getBooleanExtra(FLAG_CAMERA, true);
             isGallery = getIntent().getBooleanExtra(FLAG_GALLERY, true);
+            isCrop = getIntent().getBooleanExtra(FLAG_CROP, false);
         }
 
         if (isCamera && isGallery) toggleProgress(false);
@@ -82,7 +84,7 @@ public class ImageSelectActivity extends AppCompatActivity {
 
         if (checkPermission() && (!isCamera || !isGallery)) {
             //start image picker
-            imagePicker.withActivity(this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
+            imagePicker.withActivity(this).addContext(ImageSelectActivity.this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
         } else {
             //ask permission
             requestStoragePermission();
@@ -105,7 +107,7 @@ public class ImageSelectActivity extends AppCompatActivity {
         if (requestCode == EXTERNAL_PERMISSION_CODE) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if ((!isCamera || !isGallery))
-                    imagePicker.withActivity(this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
+                    imagePicker.withActivity(this).addContext(ImageSelectActivity.this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
             } else {
                 setResult(RESULT_CANCELED);
                 finish();
@@ -128,26 +130,33 @@ public class ImageSelectActivity extends AppCompatActivity {
                     public void onCompressed(String filePath) {
                         if (filePath != null && isCompress) {
                             //return filepath
-                            Intent intent = new Intent();
-                            intent.putExtra(RESULT_FILE_PATH, filePath);
-                            setResult(RESULT_OK, intent);
-                            finish();
+                            if (!isCrop)
+                                returnFilePath(filePath);
+                            else
+                                ImageCropActivity.startActivity(ImageSelectActivity.this, filePath);
                         }
                     }
                 });
                 String filePath = imagePicker.getImageFilePath(data);
                 if (filePath != null && !isCompress) {
                     //return filepath
-                    Intent intent = new Intent();
-                    intent.putExtra(RESULT_FILE_PATH, filePath);
-                    setResult(RESULT_OK, intent);
-                    finish();
+                    if (!isCrop)
+                        returnFilePath(filePath);
+                    else
+                        ImageCropActivity.startActivity(ImageSelectActivity.this, filePath);
                 }
             } else {
                 setResult(RESULT_CANCELED);
                 finish();
             }
         }
+    }
+
+    private void returnFilePath(String filePath) {
+        Intent intent = new Intent();
+        intent.putExtra(RESULT_FILE_PATH, filePath);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private void toggleProgress(boolean showProgress) {

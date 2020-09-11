@@ -24,6 +24,7 @@ public class ExampleActivity extends AppCompatActivity {
         intent.putExtra(ImageSelectActivity.FLAG_COMPRESS, true);
         intent.putExtra(ImageSelectActivity.FLAG_CAMERA, true);
         intent.putExtra(ImageSelectActivity.FLAG_GALLERY, true);
+        intent.putExtra(ImageSelectActivity.FLAG_CROP, true);
         startActivityForResult(intent, 1213);
     }
 
