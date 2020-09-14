@@ -19,7 +19,6 @@ import static in.mayanknagwanshi.imagepicker.ImageSelectActivity.RESULT_FILE_PAT
 
 public class ImageCropActivity extends AppCompatActivity {
     private ImageCropView imageCropView;
-    private Button buttonContinue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +26,8 @@ public class ImageCropActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_crop);
 
         imageCropView = findViewById(R.id.imageCropView);
-        buttonContinue = findViewById(R.id.buttonContinue);
+        Button buttonContinue = findViewById(R.id.buttonContinue);
+
         if (getIntent() != null && getIntent().getStringExtra(EXTRA_FILE_PATH) != null) {
             Bitmap selectedImage = BitmapFactory.decodeFile(getIntent().getStringExtra(EXTRA_FILE_PATH));
             imageCropView.setImageBitmap(selectedImage);
@@ -49,11 +49,9 @@ public class ImageCropActivity extends AppCompatActivity {
         try {
             FileOutputStream out = new FileOutputStream(filePath);
             scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
         return filePath;
     }
 

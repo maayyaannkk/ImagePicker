@@ -20,7 +20,7 @@ public class ExampleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_example);
 
         imageView = findViewById(R.id.imageView);
-        ImageSelectActivity.startImageSelectionForResult(this, true, true, true, 1213);
+        ImageSelectActivity.startImageSelectionForResult(this, true, true, true, true, 1213);
     }
 
     @Override
