@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -118,11 +117,16 @@ public class ImageCropView extends AppCompatImageView {
                 if (downTouchToMoveX != 0 && downTouchToMoveY != 0) {
                     int moveX = (int) event.getX();
                     int moveY = (int) event.getY();
-                    int displacementX = moveX - downTouchX;
-                    int displacementY = moveY - downTouchY;
+                    int displacementX = moveX - downTouchToMoveX;
+                    int displacementY = moveY - downTouchToMoveY;
                     int displacement = Math.max(displacementX, displacementY);
-                    if (sideLengthRect + displacement < Math.min(maxWidth, maxHeight) && sideLengthRect + displacement > Math.min(maxWidth, maxHeight) / 4)
+                    if (sideLengthRect + displacement < Math.min(maxWidth, maxHeight) && sideLengthRect + displacement > Math.min(maxWidth, maxHeight) / 4) {
                         sideLengthRect += displacement;
+                        rectCropGrid.set(rectLeft, rectTop, sideLengthRect + rectLeft, sideLengthRect + rectTop);
+                    }
+                    downTouchToMoveX = (int) event.getX();
+                    downTouchToMoveY = (int) event.getY();
+                    invalidate();
                 }
                 if (downTouchX == 0 && downTouchY == 0) break;
                 int moveX = (int) event.getX();
@@ -149,10 +153,35 @@ public class ImageCropView extends AppCompatImageView {
     }
 
     private Rect getCornerPaddedRect(int x, int y) {
-        return new Rect(x - 15, y - 15, x + 15, y + 15);
+        int paddingRadius = sideLengthRect / 10;
+        return new Rect(x - paddingRadius, y - paddingRadius, x + paddingRadius, y + paddingRadius);
     }
 
-    public Bitmap getCroppedBitmap() {
-        return Bitmap.createBitmap(((BitmapDrawable) getDrawable()).getBitmap(), 0,0,150,150);
+    public CroppedCoordinate getCroppedGrid() {
+        //scale grid before returning
+        double scaleFactor = getDrawable().getIntrinsicWidth() * 1.0 / maxWidth;
+        return new CroppedCoordinate((int) (rectCropGrid.left * scaleFactor), (int) (rectCropGrid.top * scaleFactor), (int) (sideLengthRect * scaleFactor));
+    }
+
+    public static class CroppedCoordinate {
+        int x, y, side;
+
+        public CroppedCoordinate(int x, int y, int side) {
+            this.x = x;
+            this.y = y;
+            this.side = side;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public int getSide() {
+            return side;
+        }
     }
 }

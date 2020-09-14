@@ -61,14 +61,14 @@ public class ImageSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 toggleProgress(true);
-                imagePicker.withActivity(ImageSelectActivity.this).addContext(ImageSelectActivity.this).chooseFromGallery(false).chooseFromCamera(true).withCompression(isCompress).start();
+                imagePicker.withActivity(ImageSelectActivity.this).chooseFromGallery(false).chooseFromCamera(true).withCompression(isCompress).start();
             }
         });
         textViewGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toggleProgress(true);
-                imagePicker.withActivity(ImageSelectActivity.this).addContext(ImageSelectActivity.this).chooseFromGallery(true).chooseFromCamera(false).withCompression(isCompress).start();
+                imagePicker.withActivity(ImageSelectActivity.this).chooseFromGallery(true).chooseFromCamera(false).withCompression(isCompress).start();
             }
         });
 
@@ -84,7 +84,7 @@ public class ImageSelectActivity extends AppCompatActivity {
 
         if (checkPermission() && (!isCamera || !isGallery)) {
             //start image picker
-            imagePicker.withActivity(this).addContext(ImageSelectActivity.this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
+            imagePicker.withActivity(this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
         } else {
             //ask permission
             requestStoragePermission();
@@ -107,7 +107,7 @@ public class ImageSelectActivity extends AppCompatActivity {
         if (requestCode == EXTERNAL_PERMISSION_CODE) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if ((!isCamera || !isGallery))
-                    imagePicker.withActivity(this).addContext(ImageSelectActivity.this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
+                    imagePicker.withActivity(this).chooseFromGallery(isGallery).chooseFromCamera(isCamera).withCompression(isCompress).start();
             } else {
                 setResult(RESULT_CANCELED);
                 finish();
