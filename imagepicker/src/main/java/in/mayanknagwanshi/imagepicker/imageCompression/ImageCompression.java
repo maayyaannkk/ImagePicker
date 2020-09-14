@@ -16,7 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class ImageCompression extends AsyncTask<String, Void, String> {
+public class ImageCompression extends AsyncTask<Void, Void, String> {
     private final String filePath;
     private final ImageCompressionListener imageCompressionListener;
 
@@ -35,14 +35,10 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        imageCompressionListener.onStart();
     }
 
     @Override
-    protected String doInBackground(String... strings) {
-        //if (strings.length == 0 || strings[0] == null)
-        //return null;
-
+    protected String doInBackground(Void... strings) {
         return compressImage(filePath);
     }
 
@@ -156,7 +152,7 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
         if (height > reqHeight || width > reqWidth) {
             final int heightRatio = Math.round((float) height / (float) reqHeight);
             final int widthRatio = Math.round((float) width / (float) reqWidth);
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+            inSampleSize = Math.min(heightRatio, widthRatio);
         }
         final float totalPixels = width * height;
         final float totalReqPixelsCap = reqWidth * reqHeight * 2;
@@ -169,10 +165,7 @@ public class ImageCompression extends AsyncTask<String, Void, String> {
     }
 
     private String getFilename() {
-
         File mediaStorageDir = new File(context.getExternalFilesDir(""), "compressed");
-
-        //File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/Compressed");
 
         // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
