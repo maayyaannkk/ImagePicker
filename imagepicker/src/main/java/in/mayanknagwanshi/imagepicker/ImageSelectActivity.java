@@ -105,18 +105,19 @@ public class ImageSelectActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private boolean checkPermission() {
         int currentAPIVersion = Build.VERSION.SDK_INT;
-        return currentAPIVersion < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        return currentAPIVersion < Build.VERSION_CODES.M || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED);
     }
 
     private void requestStoragePermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXTERNAL_PERMISSION_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, EXTERNAL_PERMISSION_CODE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == EXTERNAL_PERMISSION_CODE) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if ((!isCamera || !isGallery))
                     startActivityForResult(ImagePickerUtil.getPickImageChooserIntent(ImageSelectActivity.this, isCompress, isGallery), SELECT_IMAGE);
             } else {
