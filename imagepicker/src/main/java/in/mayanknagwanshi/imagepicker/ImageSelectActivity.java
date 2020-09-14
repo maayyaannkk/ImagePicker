@@ -33,10 +33,12 @@ public class ImageSelectActivity extends AppCompatActivity {
     private TextView textViewGallery;
     private TextView textViewCancel;
 
-    private boolean isCompress = true, isCamera = true, isGallery = true;
+    private boolean isCompress = true, isCamera = true, isGallery = true, isCrop = false;
+  
     public static final String FLAG_COMPRESS = "flag_compress";
     public static final String FLAG_CAMERA = "flag_camera";
     public static final String FLAG_GALLERY = "flag_gallery";
+    public static final String FLAG_CROP = "flag_crop";
 
     public static final String RESULT_FILE_PATH = "result_file_path";
 
@@ -85,6 +87,7 @@ public class ImageSelectActivity extends AppCompatActivity {
             isCompress = getIntent().getBooleanExtra(FLAG_COMPRESS, true);
             isCamera = getIntent().getBooleanExtra(FLAG_CAMERA, true);
             isGallery = getIntent().getBooleanExtra(FLAG_GALLERY, true);
+            isCrop = getIntent().getBooleanExtra(FLAG_CROP, false);
         }
 
         if (isCamera && isGallery) toggleProgress(false);
@@ -156,7 +159,18 @@ public class ImageSelectActivity extends AppCompatActivity {
                             sendResult(filePath);
                         }
                     }
-                }).execute();
+                });
+                String filePath = imagePicker.getImageFilePath(data);
+                if (filePath != null && !isCompress) {
+                    //return filepath
+                    if (!isCrop)
+                        returnFilePath(filePath);
+                    else
+                        ImageCropActivity.startActivity(ImageSelectActivity.this, filePath);
+                }
+            } else {
+                setResult(RESULT_CANCELED);
+                finish();
             }
 
         }, 1000);
