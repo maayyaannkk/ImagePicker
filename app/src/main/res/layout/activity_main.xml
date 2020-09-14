@@ -7,20 +7,9 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <!--<ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />-->
-
     <Button
         android:id="@+id/buttonActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_activity_example" />
-
-    <Button
-        android:id="@+id/buttonFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_fragment_example" />
 </LinearLayout>
