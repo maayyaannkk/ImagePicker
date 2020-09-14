@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.Window;
 import android.widget.ProgressBar;
@@ -126,33 +128,45 @@ public class ImageSelectActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SELECT_IMAGE) {
             if (resultCode == RESULT_OK) {
-                String filePath = ImagePickerUtil.getImageFilePath(getApplicationContext(), data);
-                if (filePath != null && !isCompress) {
-                    //return filepath
-                    Intent intent = new Intent();
-                    intent.putExtra(RESULT_FILE_PATH, filePath);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                    return;
-                }
-
-                new ImageCompression(getApplicationContext(), filePath, new ImageCompressionListener() {
-                    @Override
-                    public void onCompressed(String filePath) {
-                        if (filePath != null && isCompress) {
-                            //return filepath
-                            Intent intent = new Intent();
-                            intent.putExtra(RESULT_FILE_PATH, filePath);
-                            setResult(RESULT_OK, intent);
-                            finish();
-                        }
-                    }
-                }).execute();
+                sendResult(data);
             } else {
                 setResult(RESULT_CANCELED);
                 finish();
             }
         }
+    }
+
+    private void sendResult(final Intent data) {
+        //add delay
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String filePath = ImagePickerUtil.getImageFilePath(ImageSelectActivity.this, data);
+                if (filePath != null && !isCompress) {
+                    //return filepath
+                    sendResult(filePath);
+                    return;
+                }
+
+                new ImageCompression(ImageSelectActivity.this, filePath, new ImageCompressionListener() {
+                    @Override
+                    public void onCompressed(String filePath) {
+                        if (filePath != null && isCompress) {
+                            //return filepath
+                            sendResult(filePath);
+                        }
+                    }
+                }).execute();
+            }
+
+        }, 1000);
+    }
+
+    private void sendResult(String filePath) {
+        Intent intent = new Intent();
+        intent.putExtra(RESULT_FILE_PATH, filePath);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private void toggleProgress(boolean showProgress) {
