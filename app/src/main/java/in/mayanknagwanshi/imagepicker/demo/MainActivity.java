@@ -15,18 +15,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button buttonActivity = findViewById(R.id.buttonActivity);
-        Button buttonFragment = findViewById(R.id.buttonFragment);
 
         buttonActivity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(MainActivity.this, ExampleActivity.class));
-            }
-        });
-        buttonFragment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, ExampleFragmentActivity.class));
             }
         });
     }

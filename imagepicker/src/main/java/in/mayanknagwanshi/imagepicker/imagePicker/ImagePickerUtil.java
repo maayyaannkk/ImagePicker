@@ -1,19 +1,13 @@
 package in.mayanknagwanshi.imagepicker.imagePicker;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,77 +18,17 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import in.mayanknagwanshi.imagepicker.imageCompression.ImageCompression;
-import in.mayanknagwanshi.imagepicker.imageCompression.ImageCompressionListener;
 import in.mayanknagwanshi.imagepicker.provider.ImageSelectionProvider;
 
-public class ImagePicker {
-    private Activity activity;
-    private Fragment fragment;
-    private boolean isCompress = true, isCamera = true, isGallery = true;
-    public static final int SELECT_IMAGE = 121;
-    private ImageCompressionListener imageCompressionListener;
-    private String filePath;
+public class ImagePickerUtil {
+    static String filePath;
 
-    public ImagePicker withActivity(Activity activity) {
-        this.activity = activity;
-        return this;
-    }
-
-    public ImagePicker withFragment(Fragment fragment) {
-        this.fragment = fragment;
-        return this;
-    }
-
-    public ImagePicker chooseFromCamera(boolean isCamera) {
-        this.isCamera = isCamera;
-        return this;
-    }
-
-    public ImagePicker chooseFromGallery(boolean isGallery) {
-        this.isGallery = isGallery;
-        return this;
-    }
-
-    public ImagePicker withCompression(boolean isCompress) {
-        this.isCompress = isCompress;
-        return this;
-    }
-
-    public void start() {
-        if (activity != null && fragment != null) {
-            throw new IllegalStateException("Cannot add both activity and fragment");
-        } else if (activity == null && fragment == null) {
-            throw new IllegalStateException("Activity and fragment both are null");
-        } else {
-            if (!checkPermission()) {
-                throw new IllegalStateException("Write External Permission not found");
-            } else {
-                if (!isCamera && !isGallery) {
-                    throw new IllegalStateException("select source to pick image");
-                } else {
-                    if (activity != null)
-                        activity.startActivityForResult(getPickImageChooserIntent(), SELECT_IMAGE);
-                    else
-                        fragment.startActivityForResult(getPickImageChooserIntent(), SELECT_IMAGE);
-                }
-            }
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    private boolean checkPermission() {
-        int currentAPIVersion = Build.VERSION.SDK_INT;
-        return currentAPIVersion < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(activity != null ? activity : fragment.getActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private Intent getPickImageChooserIntent() {
-
+    public static Intent getPickImageChooserIntent(Context context, boolean isCamera, boolean isGallery) {
         // Determine Uri of camera image to save.
-        Uri outputFileUri = getCaptureImageOutputUri();
+        Uri outputFileUri = getCaptureImageOutputUri(context);
 
         List<Intent> allIntents = new ArrayList<>();
-        PackageManager packageManager = activity != null ? activity.getPackageManager() : fragment.getActivity().getPackageManager();
+        PackageManager packageManager = context.getPackageManager();
 
         if (isCamera) {
             // collect all camera intents
@@ -142,21 +76,25 @@ public class ImagePicker {
         return chooserIntent;
     }
 
-    private Uri getCaptureImageOutputUri() {
+    private static Uri getCaptureImageOutputUri(Context context) {
         Uri outputFileUri = null;
-        File getImage = activity != null ? activity.getExternalFilesDir("") : fragment.getActivity().getExternalFilesDir("");
+        File getImage = context.getExternalFilesDir("");
         if (getImage != null) {
             //outputFileUri = Uri.fromFile(new File(getImage.getPath(), "profile.png"));
             String fileName = "IMG_" + System.currentTimeMillis() + ".png";
             filePath = new File(getImage.getPath(), fileName).getPath();
-            outputFileUri = ImageSelectionProvider.getUriForFile(activity != null ? activity : fragment.getActivity(),
-                    activity != null ? activity.getApplicationContext().getPackageName() + ".image-selection-provider" : fragment.getActivity().getApplicationContext().getPackageName() + ".image-selection-provider",
+            outputFileUri = ImageSelectionProvider.getUriForFile(context,
+                    context.getPackageName() + ".image-selection-provider",
                     new File(getImage.getPath(), fileName));
         }
         return outputFileUri;
     }
 
-    private String getPickImageResultFilePath(Intent data) {
+    public static String getImageFilePath(Context context, Intent data) {
+        return getPickImageResultFilePath(context, data);
+    }
+
+    private static String getPickImageResultFilePath(Context context, Intent data) {
         boolean isCamera = data == null || data.getData() == null;
         //Log.e("data", +"");
         /*if (data != null) {
@@ -169,11 +107,11 @@ public class ImagePicker {
 
         //Log.e("isCamera", isCamera ? "true" : "false");
         if (isCamera) return filePath;
-        else return getRealPathFromURI(data.getData());
+        else return getRealPathFromURI(context, data.getData());
         //return isCamera ? getCaptureImageOutputUri() : data.getData();
     }
 
-    private String getRealPathFromURI(Uri contentUri) {
+    private static String getRealPathFromURI(Context context, Uri contentUri) {
         /*String[] proj = {MediaStore.Audio.Media.DATA};
         Cursor cursor = activity != null ?
                 activity.getContentResolver().query(contentUri, proj, null, null, null) : fragment.getActivity().getContentResolver().query(contentUri, proj, null, null, null);
@@ -182,11 +120,11 @@ public class ImagePicker {
         return cursor.getString(column_index);*/
 
         OutputStream out;
-        File file = new File(getFilename());
+        File file = new File(getFilename(context));
 
         try {
             if (file.createNewFile()) {
-                InputStream iStream = activity != null ? activity.getContentResolver().openInputStream(contentUri) : fragment.getContext().getContentResolver().openInputStream(contentUri);
+                InputStream iStream = context.getContentResolver().openInputStream(contentUri);
                 byte[] inputData = getBytes(iStream);
                 out = new FileOutputStream(file);
                 out.write(inputData);
@@ -199,7 +137,7 @@ public class ImagePicker {
         return null;
     }
 
-    private byte[] getBytes(InputStream inputStream) throws IOException {
+    private static byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
         int bufferSize = 1024;
         byte[] buffer = new byte[bufferSize];
@@ -211,21 +149,7 @@ public class ImagePicker {
         return byteBuffer.toByteArray();
     }
 
-    public String getImageFilePath(Intent data) {
-        if (!isCompress)
-            return getPickImageResultFilePath(data);
-        else if (getPickImageResultFilePath(data) != null) {
-            new ImageCompression(activity != null ? activity : fragment.getActivity(), getPickImageResultFilePath(data), imageCompressionListener).execute();
-        }
-        return null;
-    }
-
-    public void addOnCompressListener(ImageCompressionListener imageCompressionListener) {
-        this.imageCompressionListener = imageCompressionListener;
-    }
-
-    private String getFilename() {
-        Context context = activity != null ? activity : fragment.getContext();
+    private static String getFilename(Context context) {
         File mediaStorageDir = new File(context.getExternalFilesDir(""), "uncompressed");
 
         //File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/Compressed");
