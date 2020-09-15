@@ -28,14 +28,16 @@ change `x.y.z` to version in [![](https://jitpack.io/v/maayyaannkk/ImagePicker.s
 For full example, please refer to `app` module
 
 No need to request for write external storage permission, library will do that.
+
 ### Start image picker activity
 
-The simplest way to start is setup options and start the activity
+The simplest way to start is setup options and start the activity. Set the FLAG_CROP to crop resulting image in 1:1 aspect ratio
 ```java
 Intent intent = new Intent(this, ImageSelectActivity.class);
 intent.putExtra(ImageSelectActivity.FLAG_COMPRESS, false);//default is true
 intent.putExtra(ImageSelectActivity.FLAG_CAMERA, true);//default is true
 intent.putExtra(ImageSelectActivity.FLAG_GALLERY, true);//default is true
+intent.putExtra(ImageSelectActivity.FLAG_CROP, isCrop);//default is false
 startActivityForResult(intent, 1213);
 ```
 Receive result
