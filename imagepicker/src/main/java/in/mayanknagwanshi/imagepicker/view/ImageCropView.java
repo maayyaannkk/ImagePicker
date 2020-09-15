@@ -84,6 +84,11 @@ public class ImageCropView extends AppCompatImageView {
 
         maxHeight = getMeasuredHeight();
         maxWidth = getMeasuredWidth();
+
+        if (getDrawable().getIntrinsicHeight() / getDrawable().getIntrinsicWidth() > maxHeight / maxWidth) {
+            //image view width greater than bitmap width
+            maxWidth = (int) ((maxHeight * 1.0 / getDrawable().getIntrinsicHeight()) * getDrawable().getIntrinsicWidth());
+        }
     }
 
     @Override
