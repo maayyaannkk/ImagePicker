@@ -125,7 +125,8 @@ public class ImageCropView extends AppCompatImageView {
                     int displacementX = moveX - downTouchToMoveX;
                     int displacementY = moveY - downTouchToMoveY;
                     int displacement = Math.max(displacementX, displacementY);
-                    if (sideLengthRect + displacement < Math.min(maxWidth, maxHeight) && sideLengthRect + displacement > Math.min(maxWidth, maxHeight) / 4) {
+                    if (rectLeft + displacement + sideLengthRect <= maxWidth && rectTop + displacement + sideLengthRect <= maxHeight &&
+                            sideLengthRect + displacement < Math.min(maxWidth, maxHeight) && sideLengthRect + displacement > Math.min(maxWidth, maxHeight) / 4) {
                         sideLengthRect += displacement;
                         rectCropGrid.set(rectLeft, rectTop, sideLengthRect + rectLeft, sideLengthRect + rectTop);
                     }
