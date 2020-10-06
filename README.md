@@ -28,6 +28,8 @@ change `x.y.z` to version in [![](https://jitpack.io/v/maayyaannkk/ImagePicker.s
 For full example, please refer to `app` module
 
 No need to request for write external storage permission, library will do that.
+### Crop with 1:1 aspect ratio
+<img src="https://github.com/maayyaannkk/ImagePicker/blob/master/sample.gif" width="300" />
 
 ### Start image picker activity
 
