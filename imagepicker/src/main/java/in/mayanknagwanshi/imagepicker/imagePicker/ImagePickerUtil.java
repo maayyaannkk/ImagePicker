@@ -48,14 +48,11 @@ public class ImagePickerUtil {
 
         if (isGallery) {
             // collect all gallery intents
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
-            for (ResolveInfo res : listGallery) {
-                Intent intent = new Intent(galleryIntent);
-                intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                intent.setPackage(res.activityInfo.packageName);
-                allIntents.add(intent);
-            }
+            Intent galleryIntent = new Intent();
+            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+            galleryIntent.setType("image/*");
+            galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            allIntents.add(galleryIntent);
         }
 
         Intent mainIntent = allIntents.get(allIntents.size() - 1);
