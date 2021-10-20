@@ -1,10 +1,7 @@
 package in.mayanknagwanshi.imagepicker.imagePicker;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.provider.MediaStore;
@@ -28,22 +25,16 @@ public class ImagePickerUtil {
         Uri outputFileUri = getCaptureImageOutputUri(context);
 
         List<Intent> allIntents = new ArrayList<>();
-        PackageManager packageManager = context.getPackageManager();
+        //PackageManager packageManager = context.getPackageManager();
 
         if (isCamera) {
             // collect all camera intents
             Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             captureIntent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
-            List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-            for (ResolveInfo res : listCam) {
-                Intent intent = new Intent(captureIntent);
-                intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-                intent.setPackage(res.activityInfo.packageName);
-                if (outputFileUri != null) {
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                }
-                allIntents.add(intent);
+            if (outputFileUri != null) {
+                captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
             }
+            allIntents.add(captureIntent);
         }
 
         if (isGallery) {
