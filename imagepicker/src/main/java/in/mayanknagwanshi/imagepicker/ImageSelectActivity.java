@@ -105,12 +105,20 @@ public class ImageSelectActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private boolean checkPermission() {
         int currentAPIVersion = Build.VERSION.SDK_INT;
-        return currentAPIVersion < Build.VERSION_CODES.M || (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED);
+        return currentAPIVersion >= Build.VERSION_CODES.TIRAMISU ? (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED) : (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_GRANTED);
     }
 
     private void requestStoragePermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, EXTERNAL_PERMISSION_CODE);
+        ActivityCompat.requestPermissions(this, Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                        ? new String[]{Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.CAMERA}
+                        : new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA},
+                EXTERNAL_PERMISSION_CODE);
     }
 
     @Override
