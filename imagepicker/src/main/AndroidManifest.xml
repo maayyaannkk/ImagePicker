@@ -11,6 +11,7 @@
     <application>
         <activity
             android:name=".ImageSelectActivity"
+            android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.Dialog" />
         <activity android:name=".ImageCropActivity" />
 

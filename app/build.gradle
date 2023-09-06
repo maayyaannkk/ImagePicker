@@ -1,11 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdk 33
+    buildFeatures.buildConfig true
+    namespace "in.mayanknagwanshi.imagepicker.demo"
     defaultConfig {
         applicationId "in.mayanknagwanshi.imagepicker.demo"
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
