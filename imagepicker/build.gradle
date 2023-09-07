@@ -19,6 +19,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 
 }
 
@@ -31,3 +41,17 @@ dependencies {
     //androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
 
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'in.mayanknagwanshi.imagepicker'
+            artifactId = 'ImagePicker'
+            version = '1.2.1'
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+}
