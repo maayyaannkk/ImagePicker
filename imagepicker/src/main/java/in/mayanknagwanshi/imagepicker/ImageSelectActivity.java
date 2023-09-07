@@ -95,7 +95,7 @@ public class ImageSelectActivity extends AppCompatActivity {
 
         if (checkPermission() && (!isCamera || !isGallery)) {
             //start image picker
-            startActivityForResult(ImagePickerUtil.getPickImageChooserIntent(ImageSelectActivity.this, isCompress, isGallery), SELECT_IMAGE);
+            startActivityForResult(ImagePickerUtil.getPickImageChooserIntent(ImageSelectActivity.this, isCamera, isGallery), SELECT_IMAGE);
         } else {
             //ask permission
             requestStoragePermission();
@@ -127,7 +127,7 @@ public class ImageSelectActivity extends AppCompatActivity {
         if (requestCode == EXTERNAL_PERMISSION_CODE) {
             if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if ((!isCamera || !isGallery))
-                    startActivityForResult(ImagePickerUtil.getPickImageChooserIntent(ImageSelectActivity.this, isCompress, isGallery), SELECT_IMAGE);
+                    startActivityForResult(ImagePickerUtil.getPickImageChooserIntent(ImageSelectActivity.this, isCamera, isGallery), SELECT_IMAGE);
             } else {
                 setResult(RESULT_CANCELED);
                 finish();
