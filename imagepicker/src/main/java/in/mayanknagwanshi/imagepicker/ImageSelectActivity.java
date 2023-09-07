@@ -193,18 +193,18 @@ public class ImageSelectActivity extends AppCompatActivity {
     //region init
     public static void startImageSelectionForResult(Activity activity, boolean isCamera, boolean isGallery, boolean isCompress, boolean isCrop, int requestCode) {
         Intent intent = new Intent(activity, ImageSelectActivity.class);
-        intent.putExtra(ImageSelectActivity.FLAG_COMPRESS, isCamera);
-        intent.putExtra(ImageSelectActivity.FLAG_CAMERA, isGallery);
-        intent.putExtra(ImageSelectActivity.FLAG_GALLERY, isCompress);
+        intent.putExtra(ImageSelectActivity.FLAG_CAMERA, isCamera);
+        intent.putExtra(ImageSelectActivity.FLAG_GALLERY, isGallery);
+        intent.putExtra(ImageSelectActivity.FLAG_COMPRESS, isCompress);
         intent.putExtra(ImageSelectActivity.FLAG_CROP, isCrop);
         activity.startActivityForResult(intent, requestCode);
     }
 
     public static void startImageSelectionForResult(Fragment fragment, boolean isCamera, boolean isGallery, boolean isCompress, boolean isCrop, int requestCode) {
         Intent intent = new Intent(fragment.getContext(), ImageSelectActivity.class);
-        intent.putExtra(ImageSelectActivity.FLAG_COMPRESS, isCamera);
-        intent.putExtra(ImageSelectActivity.FLAG_CAMERA, isGallery);
-        intent.putExtra(ImageSelectActivity.FLAG_GALLERY, isCompress);
+        intent.putExtra(ImageSelectActivity.FLAG_CAMERA, isCamera);
+        intent.putExtra(ImageSelectActivity.FLAG_GALLERY, isGallery);
+        intent.putExtra(ImageSelectActivity.FLAG_COMPRESS, isCompress);
         intent.putExtra(ImageSelectActivity.FLAG_CROP, isCrop);
         fragment.startActivityForResult(intent, requestCode);
     }
