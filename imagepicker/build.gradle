@@ -31,16 +31,3 @@ dependencies {
     //androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-                groupId = 'in.mayanknagwanshi.imagepicker'
-                artifactId = 'in.mayanknagwanshi.imagepicker'
-                version = '1.0.1'
-            }
-        }
-    }
-}
-
