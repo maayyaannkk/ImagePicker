@@ -35,7 +35,7 @@ afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                //from components.release
+                from components.release
                 groupId = 'in.mayanknagwanshi.imagepicker'
                 artifactId = 'in.mayanknagwanshi.imagepicker'
                 version = '1.0.1'
